@@ -14,42 +14,33 @@ export class YTBService {
     return response.data;
   }
 
-  // async download(id: string): Promise<string> {
-  //   return new Promise((resolve, reject) => {
-  //     try {
-  //       const video = ytdl("https://www.youtube.com/watch?v="+id, { filter: format => format.container === 'mp4' });
-  //       video.pipe(fs.createWriteStream(Application.tmpPath()+"/"+id+".mp4"))
-  //       video.on("end", () => {
-  //         resolve("OK");
-  //       });
-  //     } catch (err) {
-  //       reject(err);
-  //     }
-  //   });
-  // }
-
-
-
-  async download(trends: string[]): Promise<string[]> {
-    return Promise.all(trends.map(async (id) => {
-      return new Promise((resolve, reject) => {
-        try {
-          const video = ytdl(
-            "https://www.youtube.com/watch?v=" + id,
-            { filter: (format) => format.container === "mp4" }
-          );
-          video.pipe(fs.createWriteStream(Application.tmpPath() + "/" + id + ".mp4"));
-          video.on("end", () => {
-            resolve("OK");
-          });
-        } catch (err) {
-          reject(err);
-        }
-      });
-    }));
+  async getDuration(id: string) {
+    const response = await axios.get(
+      "https://www.googleapis.com/youtube/v3/videos?id=" +
+        id +
+        "&part=contentDetails" +
+        "&key=" +
+        Env.get("GOOGLE_API_KEY")
+    );
+    return response.data;
   }
 
-
-
+  async download(id: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      try {
+        const video = ytdl("https://www.youtube.com/watch?v=" + id, {
+          filter: (format) => format.container === "mp4",
+        });
+        const path=Application.tmpPath() + "/Download/" + id + ".mp4"
+        video.pipe(
+          fs.createWriteStream(path)
+        );
+        video.on("end", () => {
+          resolve(path);
+        });
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
 }
-

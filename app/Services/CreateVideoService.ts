@@ -18,7 +18,6 @@ export class CreateVideoService {
       fs.rmSync(`${Application.tmpPath() + "/Download/"}/${f}`)
     );
 
-    console.log("Start");
     const trends = await ytbservice.getTopTrends(5);
     const data = await Promise.all(
       trends.items.map(async (e) => {
@@ -33,18 +32,24 @@ export class CreateVideoService {
         };
       })
     );
-    console.log("FIRST STEP");
+
     await Promise.all(
       data.map(async (video) => {
-        console.log("Start", video.id);
-        const start = Math.floor(video.time / 2 - 1);
-        const end = Math.floor(video.time / 2 + 1);
-        const path = await ytbservice.download(video.id);
-        await cutVideo(path, start, end);
-        console.log("end download", video.id);
+        try {
+          console.log("Start Download", video.id);
+
+          const start = Math.floor(video.time / 2 - 1);
+          const end = Math.floor(video.time / 2 + 1);
+          const path = await ytbservice.download(video.id);
+
+          console.log("Start Crop", video.id);
+          await cutVideo(path, start, end);
+
+          console.log("End Download + Crop", video.id);
+        } catch (error) {
+          console.log("Error Downlaoding and Cutting", video.id);
+        }
       })
     );
-    // const downloadPromises = await ytbservice.download(data);
-    // await Promise.all(downloadPromises).then(() => {console.log("All downloads completed")});
   }
 }

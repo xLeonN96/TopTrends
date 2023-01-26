@@ -2,7 +2,7 @@ import Env from "@ioc:Adonis/Core/Env";
 import axios from "axios";
 import Application from "@ioc:Adonis/Core/Application";
 const fs = require("fs");
-const ytdl = require("ytdl-core");
+import ytdl from "ytdl-core";
 export class YTBService {
   async getTopTrends(entries: number) {
     const response = await axios.get(
@@ -27,20 +27,21 @@ export class YTBService {
 
   async download(id: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      try {
-        const video = ytdl("https://www.youtube.com/watch?v=" + id, {
-          filter: (format) => format.container === "mp4",
-        });
-        const path=Application.tmpPath() + "/Download/" + id + ".mp4"
-        video.pipe(
-          fs.createWriteStream(path)
-        );
-        video.on("end", () => {
-          resolve(path);
-        });
-      } catch (err) {
+      const video = ytdl("https://www.youtube.com/watch?v=" + id, {
+        filter: (format) => format.container === "mp4",
+      });
+
+      const path = Application.tmpPath() + "/Download/" + id + ".mp4";
+      video.pipe(fs.createWriteStream(path));
+
+      video.on("error", (err) => {
+        console.log(err);
         reject(err);
-      }
+      });
+
+      video.on("end", () => {
+        resolve(path);
+      });
     });
   }
 }

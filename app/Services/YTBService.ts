@@ -14,17 +14,42 @@ export class YTBService {
     return response.data;
   }
 
-  async download(id: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      try {
-        const video = ytdl("https://www.youtube.com/watch?v="+id, { filter: format => format.container === 'mp4' });
-        video.pipe(fs.createWriteStream(Application.tmpPath()+"/"+id+".mp4"))
-        video.on("end", () => {
-          resolve("OK");
-        });
-      } catch (err) {
-        reject(err);
-      }
-    });
+  // async download(id: string): Promise<string> {
+  //   return new Promise((resolve, reject) => {
+  //     try {
+  //       const video = ytdl("https://www.youtube.com/watch?v="+id, { filter: format => format.container === 'mp4' });
+  //       video.pipe(fs.createWriteStream(Application.tmpPath()+"/"+id+".mp4"))
+  //       video.on("end", () => {
+  //         resolve("OK");
+  //       });
+  //     } catch (err) {
+  //       reject(err);
+  //     }
+  //   });
+  // }
+
+
+
+  async download(trends: string[]): Promise<string[]> {
+    return Promise.all(trends.map(async (id) => {
+      return new Promise((resolve, reject) => {
+        try {
+          const video = ytdl(
+            "https://www.youtube.com/watch?v=" + id,
+            { filter: (format) => format.container === "mp4" }
+          );
+          video.pipe(fs.createWriteStream(Application.tmpPath() + "/" + id + ".mp4"));
+          video.on("end", () => {
+            resolve("OK");
+          });
+        } catch (err) {
+          reject(err);
+        }
+      });
+    }));
   }
+
+
+
 }
+

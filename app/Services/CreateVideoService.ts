@@ -8,6 +8,7 @@ import {
   VIDEO_FORMAT,
   DOWNLOAD_FOLDER,
   TEMP_FOLDER,
+  TITLE_FOLDER,
 } from "./../Config/settings";
 import ytbservice from "@ioc:App/Services/YTBService";
 import { cutVideo, mergeClips, videoScale } from "App/Utils/VideoEditing";
@@ -27,7 +28,10 @@ export class CreateVideoService {
 
     const trends = await this.getTrends();
     const clipped = await this.downloadAndClip(trends);
-
+    const filtered = this.filter(clipped);
+    const cropped = await this.cropVideos(filtered);
+    const merged = await this.mergeVideos(cropped);
+    console.log(merged);
     // const clipped = [
     //   {
     //     name: "Developer_Direct, presented by Xbox & Bethesda",
@@ -70,14 +74,35 @@ export class CreateVideoService {
     //       "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Clip/lS1U4XCjOc0.mp4",
     //   },
     // ];
-    const clippedpaths = clipped
+  }
+
+  filter(data) {
+    return data
       .map((video) => video.clipPath)
       .filter((video) => video)
       .slice(0, 5);
+  }
+
+  async cropVideos(data) {
+    return await Promise.all(
+      data.map(async (video) => {
+        video.scaledPath = await videoScale(
+          video.clipPath,
+          `CROPPEDVIDEO_FOLDER/${video.id}.mp4`,
+          1080,
+          1920
+        );
+        return video;
+      })
+    );
+  }
+
+  async mergeVideos(data) {
     const mergedoutput = MERGEDVIDEO_FOLDER + "/Merged.mp4";
-    const video = await mergeClips(clippedpaths as string[], mergedoutput);
-    const croppedoutput = CROPPEDVIDEO_FOLDER + "/Cropped.mp4";
-    await videoScale(video, croppedoutput, 1080, 1920);
+    return await mergeClips(
+      data.map((video) => video.clipPath) as string[],
+      mergedoutput
+    );
   }
 
   clearFolders() {
@@ -87,6 +112,7 @@ export class CreateVideoService {
     fs.mkdirSync(MERGEDVIDEO_FOLDER);
     fs.mkdirSync(CROPPEDVIDEO_FOLDER);
     fs.mkdirSync(TEMP_FOLDER);
+    fs.mkdirSync(TITLE_FOLDER);
   }
 
   async getTrends() {

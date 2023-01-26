@@ -1,8 +1,4 @@
 const moment = require("moment");
-const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
-const ffmpeg = require("fluent-ffmpeg");
-ffmpeg.setFfmpegPath(ffmpegPath);
-
 export function ISO8601ToSeconds(data: string) {
   let seconds = moment.duration(data).asSeconds();
   return seconds;
@@ -17,21 +13,3 @@ export function secondsToFormat(seconds: number) {
     .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
 
-export function cutVideo(
-  inputPath: string,
-  outputPath: string,
-  start: number,
-  end: number
-) {
-  return new Promise((resolve, _) => {
-    ffmpeg()
-      .input(inputPath)
-      .setStartTime(secondsToFormat(start))
-      .setDuration(secondsToFormat(end - start))
-      .output(outputPath)
-      .on("end", () => {
-        resolve(outputPath);
-      })
-      .run();
-  });
-}

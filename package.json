@@ -28,6 +28,7 @@
     "ffmpeg-probe": "^1.0.6",
     "ffprobe": "^1.1.2",
     "fluent-ffmpeg": "^2.1.2",
+    "fs-extra": "^11.1.0",
     "moment": "^2.29.4",
     "node-cron": "^3.0.2",
     "proxy-addr": "^2.0.7",

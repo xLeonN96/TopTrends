@@ -1,14 +1,17 @@
+import Application from "@ioc:Adonis/Core/Application";
+import * as fsExtra from "fs-extra";
 import {
   CLIP_FOLDER,
   MERGEDVIDEO_FOLDER,
-  DOWNLOAD_FOLDER,
   TRENDS_QUANTITY,
   CROPPEDVIDEO_FOLDER,
   VIDEO_FORMAT,
+  DOWNLOAD_FOLDER,
+  TEMP_FOLDER,
 } from "./../Config/settings";
 import ytbservice from "@ioc:App/Services/YTBService";
 import { cutVideo, mergeClips, videoScale } from "App/Utils/VideoEditing";
-const fs = require("fs");
+import fs from "fs";
 
 // const cron = require("node-cron");
 
@@ -20,53 +23,53 @@ export class CreateVideoService {
   }
 
   async start() {
-    // this.clearFolders();
+    this.clearFolders();
 
-    // const trends = await this.getTrends();
-    // const clipped = await this.downloadAndClip(trends);
+    const trends = await this.getTrends();
+    const clipped = await this.downloadAndClip(trends);
 
-    const clipped = [
-      {
-        name: "Developer_Direct, presented by Xbox & Bethesda",
-        id: "4-Et8r1413Y",
-        time: 2641,
-        channelname: "Xbox",
-        clipPath:
-          "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Clip/Si8zRaa8vis.mp4",
-      },
-      {
-        name: "Natalie Noel's 6 Month Body Transformation",
-        id: "_VYqksya-78",
-        time: 1648,
-        channelname: "Xeela Fitness",
-        clipPath:
-          "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Clip/_VYqksya-78.mp4",
-      },
-      {
-        name: "GRIZZLIES at WARRIORS | FULL GAME HIGHLIGHTS | January 25, 2023",
-        id: "GcI0k8bRnEw",
-        time: 590,
-        channelname: "NBA",
-        clipPath:
-          "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Clip/L7spCJxloLY.mp4",
-      },
-      {
-        name: "Mark Briscoe and Jay Lethal Pay Tribute to Jay Briscoe | AEW Dynamite. 1/25/23",
-        id: "uBhuDdbfCEs",
-        time: 531,
-        channelname: "All Elite Wrestling",
-        clipPath:
-          "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Clip/uBhuDdbfCEs.mp4",
-      },
-      {
-        name: "Fortnite GUESS WHO vs Nick EH 30!",
-        id: "lS1U4XCjOc0",
-        time: 1374,
-        channelname: "More CouRage",
-        clipPath:
-          "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Clip/lS1U4XCjOc0.mp4",
-      },
-    ];
+    // const clipped = [
+    //   {
+    //     name: "Developer_Direct, presented by Xbox & Bethesda",
+    //     id: "4-Et8r1413Y",
+    //     time: 2641,
+    //     channelname: "Xbox",
+    //     clipPath:
+    //       "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Clip/Si8zRaa8vis.mp4",
+    //   },
+    //   {
+    //     name: "Natalie Noel's 6 Month Body Transformation",
+    //     id: "_VYqksya-78",
+    //     time: 1648,
+    //     channelname: "Xeela Fitness",
+    //     clipPath:
+    //       "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Clip/_VYqksya-78.mp4",
+    //   },
+    //   {
+    //     name: "GRIZZLIES at WARRIORS | FULL GAME HIGHLIGHTS | January 25, 2023",
+    //     id: "GcI0k8bRnEw",
+    //     time: 590,
+    //     channelname: "NBA",
+    //     clipPath:
+    //       "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Clip/L7spCJxloLY.mp4",
+    //   },
+    //   {
+    //     name: "Mark Briscoe and Jay Lethal Pay Tribute to Jay Briscoe | AEW Dynamite. 1/25/23",
+    //     id: "uBhuDdbfCEs",
+    //     time: 531,
+    //     channelname: "All Elite Wrestling",
+    //     clipPath:
+    //       "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Clip/uBhuDdbfCEs.mp4",
+    //   },
+    //   {
+    //     name: "Fortnite GUESS WHO vs Nick EH 30!",
+    //     id: "lS1U4XCjOc0",
+    //     time: 1374,
+    //     channelname: "More CouRage",
+    //     clipPath:
+    //       "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Clip/lS1U4XCjOc0.mp4",
+    //   },
+    // ];
     const clippedpaths = clipped
       .map((video) => video.clipPath)
       .filter((video) => video)
@@ -78,15 +81,12 @@ export class CreateVideoService {
   }
 
   clearFolders() {
-    fs.readdirSync(CLIP_FOLDER).forEach((f) =>
-      fs.rmSync(`${CLIP_FOLDER}/${f}`)
-    );
-    fs.readdirSync(DOWNLOAD_FOLDER).forEach((f) =>
-      fs.rmSync(`${DOWNLOAD_FOLDER}/${f}`)
-    );
-    fs.readdirSync(MERGEDVIDEO_FOLDER).forEach((f) =>
-      fs.rmSync(`${MERGEDVIDEO_FOLDER}/${f}`)
-    );
+    fsExtra.emptyDirSync(Application.tmpPath());
+    fs.mkdirSync(CLIP_FOLDER);
+    fs.mkdirSync(DOWNLOAD_FOLDER);
+    fs.mkdirSync(MERGEDVIDEO_FOLDER);
+    fs.mkdirSync(CROPPEDVIDEO_FOLDER);
+    fs.mkdirSync(TEMP_FOLDER);
   }
 
   async getTrends() {

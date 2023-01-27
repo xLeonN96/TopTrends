@@ -3,9 +3,12 @@ import { makeid, secondsToFormat } from "./Generic";
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
-const concat = require("ffmpeg-concat");
 const canvas = require("canvas");
 const fs = require("fs");
+let videoStitch = require("video-stitch");
+let videoConcat = videoStitch.concat;
+
+
 
 function resizingFFmpeg(
   video: string,
@@ -151,15 +154,25 @@ export function cutVideo(
 }
 
 export async function mergeClips(paths: string[], output: string) {
-  await concat({
-    output: output,
-    videos: paths,
-    transition: {
-      name: "directionalWipe",
-      duration: 100,
-    },
-  });
-  return output;
+videoConcat({
+    // ffmpeg_path: <path-to-ffmpeg> Optional. Otherwise it will just use ffmpeg on your $PATH
+    silent: true, // optional. if set to false, gives detailed output on console
+    overwrite: false, // optional. by default, if file already exists, ffmpeg will ask for overwriting in console and that pause the process. if set to true, it will force overwriting. if set to false it will prevent overwriting.
+  })
+    .clips([
+      {
+        fileName: "FILENAME",
+      },
+      {
+        fileName: "FILENAME",
+      },
+      {
+        fileName: "FILENAME",
+      },
+    ])
+    .output("myfilename") //optional absolute file name for output file
+    .concat()
+    .then((outputFileName) => {});
 }
 
 export async function addTextOnVideo(

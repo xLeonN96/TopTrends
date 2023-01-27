@@ -10,4 +10,7 @@ export const VIDEO_FORMAT = "mp4";
 
 export const REGION_CODE = "US";
 
-export const TRENDS_QUANTITY = 20;
+export const TRENDS_DOWNLOAD_QUANTITY = 15;
+
+export const VIDEO_QUANTITY = 5;
+export const DURATION_PER_VIDEO = 3;

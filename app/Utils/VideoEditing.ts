@@ -1,10 +1,10 @@
-import { TEMP_FOLDER } from './../Config/settings';
-import { secondsToFormat } from "./Generic";
+import { TEMP_FOLDER, VIDEO_FORMAT } from "./../Config/settings";
+import { makeid, secondsToFormat } from "./Generic";
 
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
-const concat = require('ffmpeg-concat')
+const concat = require("ffmpeg-concat");
 
 function resizingFFmpeg(
   video: string,
@@ -27,6 +27,7 @@ function resizingFFmpeg(
       // })
       .on("error", function (err) {
         console.log("Problem performing ffmpeg function");
+        console.log(err);
         rej(err);
       })
       .on("end", function () {
@@ -103,7 +104,7 @@ export async function videoScale(
     // landscape to potrait case
     const x = width - (newWidth / newHeight) * height;
     console.log(`New Intrim Res: ${width - x}x${height}`);
-    const cropping = TEMP_FOLDER+"/tmp.mp4";
+    const cropping = `${TEMP_FOLDER}/${makeid(5)}.${VIDEO_FORMAT}`;
     let cropped = await videoCropCenterFFmpeg(
       video,
       width - x,
@@ -154,7 +155,7 @@ export async function mergeClips(paths: string[], output: string) {
     videos: paths,
     transition: {
       name: "directionalWipe",
-      duration: 500,
+      duration: 100,
     },
   });
   return output;

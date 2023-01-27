@@ -23,6 +23,7 @@ interface video {
   channelName: string;
   time: number;
   currentPath?: string;
+  position: number;
 }
 
 export class CreateVideoService {
@@ -53,7 +54,7 @@ export class CreateVideoService {
   }
 
   getSlicedVideos(data: video[]): video[] {
-    return data.slice(0, 5);
+    return data.sort((a, b) => a.position - b.position).slice(0, 5);
   }
 
   async cropVideos(data: video[]): Promise<video[]> {
@@ -96,13 +97,14 @@ export class CreateVideoService {
   async getTrends(): Promise<video[]> {
     const trends = await ytbservice.getTopTrends(TRENDS_DOWNLOAD_QUANTITY);
     const data = await Promise.all(
-      trends.items.map(async (e) => {
+      trends.items.map(async (e, key) => {
         const time = await ytbservice.getDuration(e.id);
         const video: video = {
           id: e.id,
           name: e.snippet.title,
           time: time,
           channelName: e.snippet.channelTitle,
+          position: key,
         };
 
         return video;

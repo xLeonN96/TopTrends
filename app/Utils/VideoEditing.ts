@@ -5,10 +5,7 @@ const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
 const canvas = require("canvas");
 const fs = require("fs");
-let videoStitch = require("video-stitch");
-let videoConcat = videoStitch.concat;
-
-
+const concat = require("ffmpeg-concat");
 
 function resizingFFmpeg(
   video: string,
@@ -154,25 +151,15 @@ export function cutVideo(
 }
 
 export async function mergeClips(paths: string[], output: string) {
-videoConcat({
-    // ffmpeg_path: <path-to-ffmpeg> Optional. Otherwise it will just use ffmpeg on your $PATH
-    silent: true, // optional. if set to false, gives detailed output on console
-    overwrite: false, // optional. by default, if file already exists, ffmpeg will ask for overwriting in console and that pause the process. if set to true, it will force overwriting. if set to false it will prevent overwriting.
-  })
-    .clips([
-      {
-        fileName: "FILENAME",
-      },
-      {
-        fileName: "FILENAME",
-      },
-      {
-        fileName: "FILENAME",
-      },
-    ])
-    .output("myfilename") //optional absolute file name for output file
-    .concat()
-    .then((outputFileName) => {});
+  await concat({
+    output: output,
+    videos: paths,
+    transition: {
+      name: "directionalWipe",
+      duration: 100,
+    },
+  });
+  return output;
 }
 
 export async function addTextOnVideo(
@@ -209,7 +196,7 @@ export async function addTextOnVideo(
     ctx.font = `40px 'Chalkduster'`;
     ctx.fillStyle = "white";
     rows.forEach((row, key) => {
-      ctx.fillText(row, 20, 250 + 20 * key);
+      ctx.fillText(row, 20, 350 + (20 * key + 10));
     });
 
     // Save the canvas image to a file

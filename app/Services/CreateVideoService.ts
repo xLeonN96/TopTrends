@@ -39,57 +39,16 @@ export class CreateVideoService {
   }
 
   async start() {
-    // this.clearFolders();
+    this.clearFolders();
 
-    // const trends = await this.getTrends();
-    // const downloaded = await this.downloadVideos(trends);
-    // const valid = this.getValidVideos(downloaded);
-    // const sliced = this.getSlicedVideos(valid);
-    // const clipped = await this.clipVideos(sliced);
-    // const cropped = await this.cropVideos(clipped);
-    // const textadded = await this.addText(cropped);
-    const textadded = [
-      {
-        id: 'h8DLofLM7No',
-        name: 'Taylor Swift - Lavender Haze',
-        time: 211,
-        channelName: 'TaylorSwiftVEVO',
-        position: 0,
-        currentPath: '/var/www/TopTrends/tmp/Title/h8DLofLM7No.mp4'
-      },
-      {
-        id: 'P9tKTxbgdkk',
-        name: "TXT (투모로우바이투게더) 'Sugar Rush Ride' Official MV",
-        time: 213,
-        channelName: 'HYBE LABELS',
-        position: 1,
-        currentPath: '/var/www/TopTrends/tmp/Title/P9tKTxbgdkk.mp4'
-      },
-      {
-        id: 'ZGNj5lOtNnI',
-        name: 'Extremely Satisfying Workers!',
-        time: 486,
-        channelName: 'Beast Reacts',
-        position: 2,
-        currentPath: '/var/www/TopTrends/tmp/Title/ZGNj5lOtNnI.mp4'
-      },
-      {
-        id: 'V3vZfEhWSdw',
-        name: 'Chlöe - Pray It Away (Official Video)',
-        time: 156,
-        channelName: 'ChloeBaileyVEVO',
-        position: 3,
-        currentPath: '/var/www/TopTrends/tmp/Title/V3vZfEhWSdw.mp4'
-      },
-      {
-        id: 'NzlTuDX7veY',
-        name: 'Anna Kendrick Gets the Giggles While Eating Spicy Wings | Hot Ones',
-        time: 1473,
-        channelName: 'First We Feast',
-        position: 4,
-        currentPath: '/var/www/TopTrends/tmp/Title/NzlTuDX7veY.mp4'
-      }
-    ];
+    const trends = await this.getTrends();
+    const downloaded = await this.downloadVideos(trends);
+    const valid = this.getValidVideos(downloaded);
+    const sliced = this.getSlicedVideos(valid);
+    const clipped = await this.clipVideos(sliced);
+    const cropped = await this.cropVideos(clipped);
+    const textadded = await this.addText(cropped);
+
     const merged = await this.mergeVideos(textadded);
     // outro-intro here
 

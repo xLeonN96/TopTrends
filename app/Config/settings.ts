@@ -13,4 +13,4 @@ export const REGION_CODE = "US";
 export const TRENDS_DOWNLOAD_QUANTITY = 15;
 
 export const VIDEO_QUANTITY = 5;
-export const DURATION_PER_VIDEO = 3;
+export const DURATION_PER_VIDEO = 2;

@@ -41,7 +41,9 @@ export class CreateVideoService {
     const sliced = this.getSlicedVideos(valid);
     const clipped = await this.clipVideos(sliced);
     const cropped = await this.cropVideos(clipped);
+    // insert text here
     const merged = await this.mergeVideos(cropped);
+    // outro-intro here
 
     console.log(merged);
   }

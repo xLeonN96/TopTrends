@@ -12,7 +12,12 @@ import {
   DURATION_PER_VIDEO,
 } from "./../Config/settings";
 import ytbservice from "@ioc:App/Services/YTBService";
-import { cutVideo, mergeClips, videoScale } from "App/Utils/VideoEditing";
+import {
+  addTextOnVideo,
+  cutVideo,
+  mergeClips,
+  videoScale,
+} from "App/Utils/VideoEditing";
 import fs from "fs";
 
 // const cron = require("node-cron");
@@ -34,16 +39,64 @@ export class CreateVideoService {
   }
 
   async start() {
-    this.clearFolders();
+    // this.clearFolders();
 
-    const trends = await this.getTrends();
-    const downloaded = await this.downloadVideos(trends);
-    const valid = this.getValidVideos(downloaded);
-    const sliced = this.getSlicedVideos(valid);
-    const clipped = await this.clipVideos(sliced);
-    const cropped = await this.cropVideos(clipped);
+    // const trends = await this.getTrends();
+    // const downloaded = await this.downloadVideos(trends);
+    // const valid = this.getValidVideos(downloaded);
+    // const sliced = this.getSlicedVideos(valid);
+    // const clipped = await this.clipVideos(sliced);
+    // const cropped = await this.cropVideos(clipped);
+    const cropped = [
+      {
+        id: "NzlTuDX7veY",
+        name: "Anna Kendrick Gets the Giggles While Eating Spicy Wings | Hot Ones",
+        time: 1473,
+        channelName: "First We Feast",
+        position: 0,
+        currentPath:
+          "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Cropped/NzlTuDX7veY.mp4",
+      },
+      {
+        id: "AIc671o9yCI",
+        name: "SHAZAM! FURY OF THE GODS - Official Trailer 2",
+        time: 151,
+        channelName: "Warner Bros. Pictures",
+        position: 2,
+        currentPath:
+          "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Cropped/AIc671o9yCI.mp4",
+      },
+      {
+        id: "sWlURhM5P5Q",
+        name: "Succession Season 4 | Official Teaser Trailer | HBO",
+        time: 94,
+        channelName: "HBO Max",
+        position: 3,
+        currentPath:
+          "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Cropped/sWlURhM5P5Q.mp4",
+      },
+      {
+        id: "G08hY8dSrUY",
+        name: "A.I. Versus The Law",
+        time: 1236,
+        channelName: "LegalEagle",
+        position: 4,
+        currentPath:
+          "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Cropped/G08hY8dSrUY.mp4",
+      },
+      {
+        id: "_VYqksya-78",
+        name: "Natalie Noel's 6 Month Body Transformation",
+        time: 1648,
+        channelName: "Xeela Fitness",
+        position: 5,
+        currentPath:
+          "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Cropped/_VYqksya-78.mp4",
+      },
+    ];
     // insert text here
-    const merged = await this.mergeVideos(cropped);
+    const textadded = await this.addText(cropped);
+    const merged = await this.mergeVideos(textadded);
     // outro-intro here
 
     console.log(merged);
@@ -81,6 +134,25 @@ export class CreateVideoService {
     return await mergeClips(
       data.map((video) => video.currentPath) as string[],
       mergedoutput
+    );
+  }
+
+  async addText(data: video[]): Promise<video[]> {
+    return await Promise.all(
+      data.map(async (video) => {
+        try {
+          console.log("Start Adding Text", video.id);
+          video.currentPath = await addTextOnVideo(
+            video.currentPath!,
+            `${TITLE_FOLDER}/${video.id}.${VIDEO_FORMAT}`,
+            video.name,
+            video.channelName
+          );
+        } catch (error) {
+          console.log("Text not added", video.id);
+        }
+        return video;
+      })
     );
   }
 

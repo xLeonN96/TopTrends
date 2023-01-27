@@ -1,6 +1,5 @@
 import { TEMP_FOLDER, VIDEO_FORMAT } from "./../Config/settings";
 import { makeid, secondsToFormat } from "./Generic";
-
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -159,4 +158,43 @@ export async function mergeClips(paths: string[], output: string) {
     },
   });
   return output;
+}
+
+export async function addTextOnVideo(
+  inputPath: string,
+  outputPath: string,
+  videoName: string,
+  channelName: string
+): Promise<string> {
+  return new Promise((resolve, _) => {
+    const words = videoName.split(" ");
+    const rows: string[] = [];
+    let row = "";
+
+    words.forEach((word) => {
+      row += word + " ";
+
+      if (row.length > 18) {
+        rows.push(row);
+        row = "";
+      }
+    });
+
+    const command = ffmpeg(inputPath).videoFilters(
+      `drawtext=text='${channelName.toUpperCase()}': font='Oswald': fontsize=100: fontcolor=yellow: x=10: y=400`
+    );
+    rows.forEach((row, key) => {
+      command.videoFilters(
+        `drawtext=text='${row}':  fontfile='Oswald.ttf': fontsize=60: fontcolor=white: x=10: y=${
+          520 + key * 60
+        }`
+      );
+    });
+    command
+      .save(outputPath)
+      .on("end", () => {
+        resolve(outputPath);
+      })
+      .run();
+  });
 }

@@ -94,7 +94,6 @@ export class CreateVideoService {
           "C:\\Users\\Leonardo\\Projects\\TopTrendù\\tmp/Cropped/_VYqksya-78.mp4",
       },
     ];
-    // insert text here
     const textadded = await this.addText(cropped);
     const merged = await this.mergeVideos(textadded);
     // outro-intro here

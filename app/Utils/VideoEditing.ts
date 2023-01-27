@@ -1,10 +1,11 @@
-import { TEMP_FOLDER, VIDEO_FORMAT } from "./../Config/settings";
+import { TEMP_FOLDER, VIDEO_FORMAT,TITLE_FOLDER } from "./../Config/settings";
 import { makeid, secondsToFormat } from "./Generic";
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
 const concat = require("ffmpeg-concat");
-
+const canvas = require("canvas");
+const fs = require("fs");
 function resizingFFmpeg(
   video: string,
   width: number,
@@ -180,21 +181,57 @@ export async function addTextOnVideo(
       }
     });
 
-    const command = ffmpeg(inputPath).videoFilters(
-      `drawtext=text='${channelName.toUpperCase()}': font='Oswald': fontsize=100: fontcolor=yellow: x=10: y=400`
-    );
-    rows.forEach((row, key) => {
-      command.videoFilters(
-        `drawtext=text='${row}':  fontfile='Oswald.ttf': fontsize=60: fontcolor=white: x=10: y=${
-          520 + key * 60
-        }`
-      );
-    });
-    command
-      .save(outputPath)
-      .on("end", () => {
+    // Create a new canvas
+    const image = canvas.createCanvas(640, 480);
+    const ctx = image.getContext("2d");
+    // set the canvas background to transparent
+    ctx.clearRect(0, 0, image.width, image.height);
+
+    // Set the font and fill style for the text
+    ctx.font = `80px 'Chalkduster'`;
+    ctx.fillStyle = "yellow";
+
+    // Add the text to the canvas
+    ctx.fillText(channelName,20, 250);
+
+    // Save the canvas image to a file
+    const buffer = image.toBuffer("image/png");
+    const overlaypath = TITLE_FOLDER+"/"+makeid(6)+".png";
+    fs.writeFileSync(overlaypath, buffer);
+    
+    const inputVideo = inputPath;
+    const imageOverlay = overlaypath;
+    const outputVideo = outputPath;
+
+    ffmpeg()
+      .input(inputVideo)
+      .input(imageOverlay)
+      .complexFilter(["overlay=0:0:enable='between(t,0,30)'"])
+      .output(outputVideo)
+      .on("end", function () {
+        console.log("Video overlay complete!");
         resolve(outputPath);
       })
+      .on("error", function (err) {
+        console.log("An error occurred: " + err.message);
+      })
       .run();
+
+    // const command = ffmpeg(inputPath).videoFilters(
+    //   `drawtext=text='${channelName.toUpperCase()}': font='Oswald': fontsize=100: fontcolor=yellow: x=10: y=400`
+    // );
+    // rows.forEach((row, key) => {
+    //   command.videoFilters(
+    //     `drawtext=text='${row}':  fontfile='Oswald.ttf': fontsize=60: fontcolor=white: x=10: y=${
+    //       520 + key * 60
+    //     }`
+    //   );
+    // });
+    // command
+    //   .save(outputPath)
+    //   .on("end", () => {
+    //     resolve(outputPath);
+    //   })
+    //   .run();
   });
 }

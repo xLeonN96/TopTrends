@@ -171,7 +171,8 @@ export async function addTextOnVideo(
   inputPath: string,
   outputPath: string,
   videoName: string,
-  channelName: string
+  channelName: string,
+  index: number
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const words = videoName.toUpperCase().split(" ");
@@ -179,7 +180,7 @@ export async function addTextOnVideo(
     let rowIndex = 0;
 
     words.forEach((word) => {
-      if (rows[rowIndex].length + word.length > 40) {
+      if (rows[rowIndex].length + word.length > 25) {
         rowIndex++;
         rows[rowIndex] = "";
       }
@@ -200,16 +201,21 @@ export async function addTextOnVideo(
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, image.width, image.height);
 
-    // Add the text to the canvas (channel name)
-    ctx.font = `100px '${FONT}'`;
+    // Add index
+    ctx.font = `300px '${FONT}'`;
     ctx.fillStyle = "yellow";
-    ctx.fillText(channelName, 20, 500);
+    ctx.fillText("#" + index, 20, 565);
+
+    // Add the text to the canvas (channel name)
+    ctx.font = `75px '${FONT}'`;
+    ctx.fillStyle = "yellow";
+    ctx.fillText(channelName, 290, 480);
 
     // Add the text to the canvas (video name)
     ctx.font = `50px '${FONT}'`;
     ctx.fillStyle = "white";
     rows.forEach((row, key) => {
-      ctx.fillText(row, 20, 570 + 50 * key);
+      ctx.fillText(row, 290, 540 + 50 * key);
     });
 
     // Save the canvas image to a file

@@ -10,6 +10,7 @@ import {
   TEMP_FOLDER,
   TITLE_FOLDER,
   DURATION_PER_VIDEO,
+  INTRO_VIDEO,
 } from "./../Config/settings";
 import ytbservice from "@ioc:App/Services/YTBService";
 import {
@@ -50,12 +51,24 @@ export class CreateVideoService {
     videos = await this.clipVideos(videos);
     videos = await this.cropVideos(videos);
     videos = await this.addText(videos);
+    videos = this.addIntro(videos);
 
-    // outro-intro here
-    
     const merged = await this.mergeVideos(videos);
 
     console.log(merged);
+  }
+
+  addIntro(data: video[]): video[] {
+    const intro: video = {
+      id: "intro",
+      name: "intro",
+      channelName: "intro",
+      time: 100,
+      position: 0,
+      currentPath: INTRO_VIDEO,
+    };
+
+    return [intro, ...data];
   }
 
   getValidVideos(data: video[]): video[] {

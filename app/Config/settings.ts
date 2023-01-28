@@ -10,6 +10,8 @@ export const VIDEO_FORMAT = "mp4";
 
 export const REGION_CODE = "US";
 
+export const FONT = "Beirut";
+
 export const TRENDS_DOWNLOAD_QUANTITY = 15;
 
 export const VIDEO_QUANTITY = 5;

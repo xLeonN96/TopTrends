@@ -1,4 +1,9 @@
-import { TEMP_FOLDER, VIDEO_FORMAT, TITLE_FOLDER } from "./../Config/settings";
+import {
+  TEMP_FOLDER,
+  VIDEO_FORMAT,
+  TITLE_FOLDER,
+  FONT,
+} from "./../Config/settings";
 import { makeid, secondsToFormat } from "./Generic";
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpeg = require("fluent-ffmpeg");
@@ -155,8 +160,8 @@ export async function mergeClips(paths: string[], output: string) {
     output: output,
     videos: paths,
     transition: {
-      name: "directionalWipe",
-      duration: 100,
+      name: "fade",
+      duration: 1,
     },
   });
   return output;
@@ -169,34 +174,33 @@ export async function addTextOnVideo(
   channelName: string
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const words = videoName.split(" ");
-    const rows: string[] = [];
-    let row = "";
+    const words = videoName.toUpperCase().split(" ");
+    const rows: string[] = [""];
+    let rowIndex = 0;
 
     words.forEach((word) => {
-      row += word + " ";
-
-      if (row.length > 18) {
-        rows.push(row);
-        row = "";
+      if (rows[rowIndex].length + word.length > 40) {
+        rowIndex++;
+        rows[rowIndex] = "";
       }
+      rows[rowIndex] += `${word} `;
     });
 
     // Create a new canvas
-    const image = canvas.createCanvas(640, 480);
+    const image = canvas.createCanvas(1640, 1480);
     const ctx = image.getContext("2d");
     ctx.clearRect(0, 0, image.width, image.height);
 
     // Add the text to the canvas (channel name)
-    ctx.font = `80px 'Chalkduster'`;
+    ctx.font = `100px '${FONT}'`;
     ctx.fillStyle = "yellow";
-    ctx.fillText(channelName, 20, 250);
+    ctx.fillText(channelName, 20, 500);
 
     // Add the text to the canvas (video name)
-    ctx.font = `40px 'Chalkduster'`;
+    ctx.font = `50px '${FONT}'`;
     ctx.fillStyle = "white";
     rows.forEach((row, key) => {
-      ctx.fillText(row, 20, 350 + (20 * key + 10));
+      ctx.fillText(row, 20, 570 + 50 * key);
     });
 
     // Save the canvas image to a file
@@ -211,9 +215,11 @@ export async function addTextOnVideo(
       .output(outputPath)
       .on("end", function () {
         console.log("Video overlay complete!");
+        fs.unlinkSync(overlaypath);
         resolve(outputPath);
       })
       .on("error", function (err) {
+        fs.unlinkSync(overlaypath);
         reject(err);
       })
       .run();

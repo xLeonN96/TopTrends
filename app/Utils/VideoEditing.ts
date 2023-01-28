@@ -191,6 +191,15 @@ export async function addTextOnVideo(
     const ctx = image.getContext("2d");
     ctx.clearRect(0, 0, image.width, image.height);
 
+    // Add the background
+    // Create a gradient for the bottom fading effect
+    const gradient = ctx.createLinearGradient(0, 125, 0, 900);
+    gradient.addColorStop(0, "rgba(0, 0, 0, 0)");
+    gradient.addColorStop(0.5, "rgba(0, 0, 0, 0.7)");
+    gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, image.width, image.height);
+
     // Add the text to the canvas (channel name)
     ctx.font = `100px '${FONT}'`;
     ctx.fillStyle = "yellow";
@@ -205,6 +214,7 @@ export async function addTextOnVideo(
 
     // Save the canvas image to a file
     const buffer = image.toBuffer("image/png");
+
     const overlaypath = TITLE_FOLDER + "/" + makeid(6) + ".png";
     fs.writeFileSync(overlaypath, buffer);
 

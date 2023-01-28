@@ -41,62 +41,14 @@ export class CreateVideoService {
   async start() {
     let videos: video[] = [];
 
-    // this.clearFolders();
+    this.clearFolders();
 
-    // videos = await this.getTrends();
-    // videos = await this.downloadVideos(videos);
-    // videos = this.getValidVideos(videos);
-    // videos = this.getSlicedVideos(videos);
-    // videos = await this.clipVideos(videos);
-    // videos = await this.cropVideos(videos);
-
-    videos = [
-      {
-        id: "h8DLofLM7No",
-        name: "Taylor Swift - Lavender Haze",
-        time: 211,
-        channelName: "TaylorSwiftVEVO",
-        position: 0,
-        currentPath:
-          "/Users/vincenzobonaccorso/Sites/TopTrends/tmp/Cropped/h8DLofLM7No.mp4",
-      },
-      {
-        id: "P9tKTxbgdkk",
-        name: "TXT (투모로우바이투게더) 'Sugar Rush Ride' Official MV",
-        time: 213,
-        channelName: "HYBE LABELS",
-        position: 1,
-        currentPath:
-          "/Users/vincenzobonaccorso/Sites/TopTrends/tmp/Cropped/P9tKTxbgdkk.mp4",
-      },
-      {
-        id: "5Dh_9k4Ma2w",
-        name: "I built EVERY MINECRAFT structure in LEGO...",
-        time: 611,
-        channelName: "TD BRICKS",
-        position: 2,
-        currentPath:
-          "/Users/vincenzobonaccorso/Sites/TopTrends/tmp/Cropped/5Dh_9k4Ma2w.mp4",
-      },
-      {
-        id: "V3vZfEhWSdw",
-        name: "Chlöe - Pray It Away (Official Video)",
-        time: 156,
-        channelName: "ChloeBaileyVEVO",
-        position: 3,
-        currentPath:
-          "/Users/vincenzobonaccorso/Sites/TopTrends/tmp/Cropped/V3vZfEhWSdw.mp4",
-      },
-      {
-        id: "ZGNj5lOtNnI",
-        name: "Extremely Satisfying Workers!",
-        time: 486,
-        channelName: "Beast Reacts",
-        position: 4,
-        currentPath:
-          "/Users/vincenzobonaccorso/Sites/TopTrends/tmp/Cropped/ZGNj5lOtNnI.mp4",
-      },
-    ];
+    videos = await this.getTrends();
+    videos = await this.downloadVideos(videos);
+    videos = this.getValidVideos(videos);
+    videos = this.getSlicedVideos(videos);
+    videos = await this.clipVideos(videos);
+    videos = await this.cropVideos(videos);
 
     videos = await this.addText(videos);
 

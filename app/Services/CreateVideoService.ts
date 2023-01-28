@@ -49,10 +49,10 @@ export class CreateVideoService {
     videos = this.getSlicedVideos(videos);
     videos = await this.clipVideos(videos);
     videos = await this.cropVideos(videos);
-
     videos = await this.addText(videos);
 
     // outro-intro here
+    
     const merged = await this.mergeVideos(videos);
 
     console.log(merged);

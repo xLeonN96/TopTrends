@@ -31,12 +31,16 @@
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.1.0",
     "gl": "^6.0.2",
+    "google-auth-library": "^8.7.0",
+    "googleapis": "^110.0.0",
     "moment": "^2.29.4",
     "node-cron": "^3.0.2",
+    "path": "^0.12.7",
     "proxy-addr": "^2.0.7",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.21",
     "video-stitch": "^1.7.1",
+    "youtube-videos-uploader": "^2.0.9",
     "ytdl-core": "^4.11.2"
   }
 }

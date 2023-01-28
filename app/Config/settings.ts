@@ -1,6 +1,6 @@
 import Application from "@ioc:Adonis/Core/Application";
-const appRoot = process.env.PWD;
-
+const path = require('path');
+export const projectDirectory = path.resolve(__dirname, '..');
 export const CLIP_FOLDER = Application.tmpPath() + "/Clip";
 export const DOWNLOAD_FOLDER = Application.tmpPath() + "/Download";
 export const MERGEDVIDEO_FOLDER = Application.tmpPath() + "/Merged";
@@ -11,9 +11,9 @@ export const VIDEO_FORMAT = "mp4";
 
 export const REGION_CODE = "US";
 
-export const FONT = "Beirut";
+export const FONT = "arialbd";
 
-export const INTRO_VIDEO = appRoot + "/intro.mp4";
+export const INTRO_VIDEO = projectDirectory + "/intro.mp4";
 
 export const TRENDS_DOWNLOAD_QUANTITY = 15;
 

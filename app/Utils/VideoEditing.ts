@@ -156,14 +156,22 @@ export function cutVideo(
 }
 
 export async function mergeClips(paths: string[], output: string) {
-  await concat({
-    output: output,
-    videos: paths,
-    transition: {
-      name: "fade",
-      duration: 1,
-    },
-  });
+  for (let i = 0; i < paths.length; i++) {
+    const vid = paths[i];
+
+    let videosArray = [output, vid];
+    if (i === 0) videosArray = [vid];
+
+    await concat({
+      output: output,
+      videos: videosArray,
+      transition: {
+        name: "fade",
+        duration: 1,
+      },
+    });
+  }
+
   return output;
 }
 
